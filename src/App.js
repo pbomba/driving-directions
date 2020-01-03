@@ -25,12 +25,18 @@ class App extends React.Component {
   }
 
   identifyStartEnd = (array) => {
-    // this means that the first heading is a direction and there is time(dist) format
-    if (array[0].substring(0,4) === "Head" && array[1].substring(array[1].length -1 === ")") ) {
+    // if first heading is a direction and there is time(dist) format
+    if (array[0].substring(0,4) === "Head" && array[1].substring(array[1].length -1) === ")" ) {
       // removes all before and including "("
       array[1] = array[1].substring(array[1].indexOf("(") + 1 )
       // removes any other parens
      array[1] = array[1].replace(/[()]/g, '')
+    // if last instruction is time(dist) format
+    }
+    if (array[array.length - 1].substring(array[array.length - 1].length - 1) === ")") {
+      let k = array.length - 1
+      array[k] = array[k].substring(array[k].indexOf("(") + 1)
+      array[k] = array[k].replace(/[()]/g, '')
     }
     return array
   }
