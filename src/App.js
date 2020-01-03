@@ -15,13 +15,24 @@ class App extends React.Component {
   }
 
   parseText = () => {
-    let noStreetView = []
     let textArray = this.state.text.split("\n")
-    noStreetView = this.removeStreetView(textArray)
+    let startToFinish = this.identifyStartEnd(textArray)
+    let noStreetView = this.removeStreetView(startToFinish)
     let noHeadings = this.removeHeadings(noStreetView)
     let withDistance = this.addApproxDistance(noHeadings)
     let capped = this.capitalize(withDistance)
     this.setState({formatted: capped})
+  }
+
+  identifyStartEnd = (array) => {
+    // this means that the first heading is a direction and there is time(dist) format
+    if (array[0].substring(0,4) === "Head" && array[1].substring(array[1].length -1 === ")") ) {
+      // removes all before and including "("
+      array[1] = array[1].substring(array[1].indexOf("(") + 1 )
+      // removes any other parens
+     array[1] = array[1].replace(/[()]/g, '')
+    }
+    return array
   }
 
   removeStreetView = (textArray) => {
