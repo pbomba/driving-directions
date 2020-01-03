@@ -54,7 +54,9 @@ class App extends React.Component {
         arr.push(textArray[i].trim())
       }
     }
-    arr.push(end)
+    if (end != "") {
+      arr.push(end)
+    }
     return arr
   }
 
@@ -84,7 +86,7 @@ class App extends React.Component {
     let current = ""
     for (i = 0; i < array.length; i++) {
       if (array[i].slice(-3) === " mi" || array[i].slice(-3) === " ft") {
-        current = current + ` (Approx. ${array[i]})`
+        current = current + ` (approx. ${array[i]})`
       } else {
         if (current !== "") {
           distArr.push(current)  
@@ -112,6 +114,7 @@ class App extends React.Component {
         array[i] = array[i].replace(patterns[j], word => word.toUpperCase())
       }
     }
+    console.log(array)
     return array
   }
 
@@ -127,12 +130,16 @@ class App extends React.Component {
       <div className="App">
         <div className="Main">
           <h1>Driving Directions Formatter</h1>
-          <textarea id="google-directions" cols="50" rows="10" value={this.state.value} onChange={this.addText} ></textarea>
+          <a href="http://paulbomba.com/locations-tools/" style={{color: "white", fontSize: 10}}>How to use</a>
+          <div style={{height: 12, width: 2}}></div>
+          <textarea id="google-directions" cols="50" rows="10" value={this.state.value} onChange={this.addText}>Paste directions from GoogleMaps</textarea>
           <div style={{height: 24, width: 2}}></div>
           <button onClick={this.parseText}>Parse</button>
           <ul style={{textAlign: "left", fontSize: 16}}>
             {this.printDirections()}
           </ul>
+          <div style={{height: 24, width: 2}}></div>
+          <p style={{color: "white", fontSize: 10}}>created by Paul Bomba</p>
         </div>
       </div>
     )
