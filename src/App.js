@@ -47,7 +47,7 @@ class App extends React.Component {
     for (i = 0; i < array.length; i++) {
       if (array[i].substring(array[i].length - 1) === ")") {
         noHeadings.pop()
-      } else if (array[i].substring(0,7) === "Passing" || array[i].substring(0,7) === "Enterin" ) {
+      } else if (array[i].substring(0,7) === "Passing" || array[i].substring(0,7) === "Enterin" || array[i].substring(0,7) === "Continu") {
         // ignores "passing" or "entering" a state
       } else if (array[i].substring(0,7) === "Toll ro" ) {
         // adds "TOLL ROAD to prior index for toll roads"
