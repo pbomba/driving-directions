@@ -21,6 +21,7 @@ class App extends React.Component {
     let noHeadings = this.removeHeadings(noStreetView)
     let withDistance = this.addApproxDistance(noHeadings)
     let capped = this.capitalize(withDistance)
+    let streetCapped = this.streetCapitalize(capped)
     this.setState({formatted: capped})
   }
 
@@ -66,7 +67,7 @@ class App extends React.Component {
     for (i = 0; i < array.length; i++) {
       if (array[i].substring(array[i].length - 1) === ")") {
         noHeadings.pop()
-      } else if (array[i].substring(0,7) === "Passing" || array[i].substring(0,7) === "Enterin" || array[i].substring(0,7) === "Continu") {
+      } else if (array[i].substring(0,7) === "Passing" || array[i].substring(0,7) === "Enterin" || array[i].substring(0,7) === "Parts o") {
         // ignores "passing" or "entering" a state
       } else if (array[i].substring(0,7) === "Toll ro" ) {
         // adds "TOLL ROAD to prior index for toll roads"
@@ -104,6 +105,7 @@ class App extends React.Component {
       let j
       let patterns = [/\bHead north/, /\bHead south/, /\bHead east/, /\bHead west/,
                       /\bHead northeast/, /\bHead northwest/, /\bHead southeast/, /\bHead southwest/,
+                      // /\beast/, /\bwest/,/\bnorth/,/\bsouth/,
                       /\bturn left/, /\bturn right/, /\bTurn left/, /\bTurn right/,
                       /\bmerge/, /\bMerge/, /\bcontinue/, /\bContinue/, /\bcontinue straight/, /\bContinue straight/,
                       /\btake exit/, /\bTake exit/,
@@ -116,6 +118,12 @@ class App extends React.Component {
     }
     console.log(array)
     return array
+  }
+
+  streetCapitalize = (array) => {
+    let streetCap = []
+
+    return streetCap
   }
 
   printDirections = () => {
