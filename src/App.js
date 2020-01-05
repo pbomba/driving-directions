@@ -15,14 +15,24 @@ class App extends React.Component {
   }
 
   parseText = () => {
+    // splits lines into array
     let textArray = this.state.text.split("\n")
+    // formats starting and end points
     let startToFinish = this.identifyStartEnd(textArray)
+    // removes any "street view" and puts Destination @ end
     let noStreetView = this.removeStreetView(startToFinish)
+    // removes leg of journey headings, and some other messages
     let noHeadings = this.removeHeadings(noStreetView)
+    // puts approximate distance
     let withDistance = this.addApproxDistance(noHeadings)
-    let capped = this.capitalize(withDistance)
-    let streetCapped = this.streetCapitalize(capped)
-    this.setState({formatted: capped})
+    // capitalizes certain terms
+    let allCaps = this.capAll(withDistance)
+    // remove some caps
+    let decapped = this.decap(allCaps)
+    // let capped = this.capitalize(withDistance)
+    // let streetCapped = this.streetCapitalize(capped)
+    let finished = this.finish(decapped)
+    this.setState({formatted: finished})
   }
 
   identifyStartEnd = (array) => {
@@ -72,7 +82,7 @@ class App extends React.Component {
       } else if (array[i].substring(0,7) === "Toll ro" ) {
         // adds "TOLL ROAD to prior index for toll roads"
         let temp = noHeadings.pop()
-        temp = temp + " (TOLL ROAD)"
+        temp = temp + " (toll road)"
         noHeadings.push(temp)
       } else {
         noHeadings.push(array[i])
@@ -99,32 +109,69 @@ class App extends React.Component {
     return distArr
   } 
 
-  capitalize = (array) => {
+  // capitalize = (array) => {
+  //   let i
+  //   for (i = 0; i < array.length; i++) {
+  //     let j
+  //     let patterns = [/\bHead north/, /\bHead south/, /\bHead east/, /\bHead west/,
+  //                     /\bHead northeast/, /\bHead northwest/, /\bHead southeast/, /\bHead southwest/,
+  //                     // /\beast/, /\bwest/,/\bnorth/,/\bsouth/,
+  //                     /\bright lane/, /\bleft lane/,
+  //                     /\bturn left/, /\bturn right/, /\bTurn left/, /\bTurn right/,
+  //                     /\bmerge/, /\bMerge/, /\bcontinue/, /\bContinue/, /\bcontinue straight/, /\bContinue straight/,
+  //                     /\btake exit/, /\bTake exit/,
+  //                     /\buse left lane/, /\buse right lane/, /\bUse left lane/, /\bUse right lane/,
+  //                     /\bslight right/, /\bslight left/, /\bSlight right/, /\bSlight left/,
+  //                     /\bKeep right/, /\bkeep right/, /\bkeep left/,/\bKeep left/ ]
+  //     for (j = 0; j < patterns.length; j++){
+  //       array[i] = array[i].replace(patterns[j], word => word.toUpperCase())
+  //     }
+  //   }
+  //   console.log(array)
+  //   return array
+  // }
+
+  capAll = (array) => {
+    let i
+    let allCaps = []
+    for (i = 0; i < array.length; i++) {
+      allCaps.push(array[i].toUpperCase())
+    }
+    return allCaps
+  }
+
+  decap = (array) => {
     let i
     for (i = 0; i < array.length; i++) {
       let j
-      let patterns = [/\bHead north/, /\bHead south/, /\bHead east/, /\bHead west/,
-                      /\bHead northeast/, /\bHead northwest/, /\bHead southeast/, /\bHead southwest/,
-                      // /\beast/, /\bwest/,/\bnorth/,/\bsouth/,
-                      /\bturn left/, /\bturn right/, /\bTurn left/, /\bTurn right/,
-                      /\bmerge/, /\bMerge/, /\bcontinue/, /\bContinue/, /\bcontinue straight/, /\bContinue straight/,
-                      /\btake exit/, /\bTake exit/,
-                      /\buse left lane/, /\buse right lane/, /\bUse left lane/, /\bUse right lane/,
-                      /\bslight right/, /\bslight left/, /\bSlight right/, /\bSlight left/,
-                      /\bKeep right/, /\bkeep right/, /\bkeep left/,/\bKeep left/ ]
-      for (j = 0; j < patterns.length; j++){
-        array[i] = array[i].replace(patterns[j], word => word.toUpperCase())
+      let patterns = [/\bFOLLOW/, /\b AT /, /\b ON /, /\b THE /, /\ FOR /,
+                      /\b FORK /, /\b ONTO /, /\b TO /,
+                      /\b STAY /, /\b SIGNS /,
+                      /\b SIGN /, /\b AND /, /\bDESTINATION WILL BE on the RIGHT/,
+                      /\bDESTINATION WILL BE on the LEFT/, /\b MI/,
+                      /\b FT/, /\b TOWARD/, /\bAPPROX/]
+      for (j = 0; j < patterns.length; j++) {
+        array[i] = array[i].replace(patterns[j], word => word.toLowerCase())
       }
     }
-    console.log(array)
     return array
   }
 
-  streetCapitalize = (array) => {
-    let streetCap = []
-
-    return streetCap
+  finish = (array) => {
+    if (array[array.length - 1].substring(0,11) === "destination") {
+      let finished = array[array.length - 1].replace(/\bd/, d => d.toUpperCase())
+      array[array.length - 1] = finished
+    }
+    return array
   }
+
+  // streetCapitalize = (array) => {
+  //   let streetCap = []
+
+  //   console.log ("array:", array)
+  //   console.log ("streetCap:", streetCap)
+  //   return streetCap
+  // }
 
   printDirections = () => {
     return (
@@ -140,7 +187,7 @@ class App extends React.Component {
           <h1>Driving Directions Formatter</h1>
           <a href="http://paulbomba.com/locations-tools/" style={{color: "white", fontSize: 10}}>How to use</a>
           <div style={{height: 12, width: 2}}></div>
-          <textarea id="google-directions" cols="50" rows="10" value={this.state.value} onChange={this.addText}>Paste directions from GoogleMaps</textarea>
+          <textarea id="google-directions" cols="50" rows="10" value={this.state.value} placeHolder={"Paste directions from GoogleMaps"} onChange={this.addText}></textarea>
           <div style={{height: 24, width: 2}}></div>
           <button onClick={this.parseText}>Parse</button>
           <ul style={{textAlign: "left", fontSize: 16}}>
@@ -155,3 +202,5 @@ class App extends React.Component {
 }
 
 export default App;
+
+// array[i].substring(0,7) === "Continu"
