@@ -148,7 +148,7 @@ class App extends React.Component {
                       /\b FORK /, /\b ONTO /, /\b TO /,
                       /\b STAY /, /\b SIGNS /,
                       /\b SIGN /, /\b AND /, /\bDESTINATION WILL BE on the RIGHT/,
-                      /\bDESTINATION WILL BE on the LEFT/, /\b MI/,
+                      /\bDESTINATION WILL BE on the LEFT/, /\b MI[)]/,
                       /\b FT/, /\b TOWARD/, /\bAPPROX/]
       for (j = 0; j < patterns.length; j++) {
         array[i] = array[i].replace(patterns[j], word => word.toLowerCase())
