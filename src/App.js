@@ -65,25 +65,33 @@ class App extends React.Component {
         arr.push(textArray[i].trim())
       }
     }
-    if (end != "") {
+    if (end !== "") {
       arr.push(end)
     }
     return arr
   }
 
   removeHeadings = (array) => {
+    console.log(array[7].substring(0,7)==="Pass by")
     let i
     let noHeadings = []
     for (i = 0; i < array.length; i++) {
-      if (array[i].substring(array[i].length - 1) === ")") {
+      if (array[i].substring(0,7) === "Pass by") {
+        // ignores "Pass by mcDonalds"
+        console.log("hit")
+      } else if (array[i].substring(array[i].length - 1) === ")") {
         noHeadings.pop()
-      } else if (array[i].substring(0,7) === "Passing" || array[i].substring(0,7) === "Enterin" || array[i].substring(0,7) === "Parts o" || array[i].substring(0,7) === "Pass by") {
+      } else if (array[i].substring(0,7) === "Passing" || array[i].substring(0,7) === "Enterin" || array[i].substring(0,7) === "Parts o" ) {
         // ignores "passing" or "entering" a state
       } else if (array[i].substring(0,7) === "Toll ro" ) {
         // adds "TOLL ROAD to prior index for toll roads"
         let temp = noHeadings.pop()
         temp = temp + " (toll road)"
         noHeadings.push(temp)
+      } else if (array[i].substring(0,7) === "Pass by") {
+        // ignores pass by and next element in array
+        console.log("hit")
+        i = i + 1
       } else {
         noHeadings.push(array[i])
       }
@@ -144,7 +152,7 @@ class App extends React.Component {
     let i
     for (i = 0; i < array.length; i++) {
       let j
-      let patterns = [/\bFOLLOW/, /\b AT /, /\b ON /, /\b THE /, /\ FOR /,
+      let patterns = [/\bFOLLOW/, /\b AT /, /\b ON /, /\b THE /, /\b FOR /,
                       /\b FORK /, /\b ONTO /, /\b TO /,
                       /\b STAY /, /\b SIGNS /,
                       /\b SIGN /, /\b AND /, /\bDESTINATION WILL BE on the RIGHT/,
@@ -176,7 +184,7 @@ class App extends React.Component {
   printDirections = () => {
     return (
       this.state.formatted.map(
-        line => <li>{line}</li>)
+        line => <li key={line} >{line}</li>)
       )
   }
 
@@ -187,7 +195,7 @@ class App extends React.Component {
           <h1>Driving Directions Formatter</h1>
           <a href="http://paulbomba.com/locations-tools/" style={{color: "white", fontSize: 10}}>How to use</a>
           <div style={{height: 12, width: 2}}></div>
-          <textarea id="google-directions" cols="50" rows="10" value={this.state.value} placeHolder={"Paste directions from GoogleMaps"} onChange={this.addText}></textarea>
+          <textarea id="google-directions" cols="50" rows="10" value={this.state.value} placeholder={"Paste directions from GoogleMaps"} onChange={this.addText}></textarea>
           <div style={{height: 24, width: 2}}></div>
           <button onClick={this.parseText}>Parse</button>
           <ul style={{textAlign: "left", fontSize: 16}}>
